@@ -30,20 +30,17 @@ namespace TruvaniDemo.Controllers
             IEnumerable<Product> recommended;
             var products = Get();
             var cartItem = products.FirstOrDefault(x => x.id == id);
-            recommended = products.Where(p => p.id != cartItem.id && p.categories.Intersect(cartItem.categories).Any() && p.price <= cartItem.price).OrderByDescending(x => x.categories.Count);
+            recommended = products.Where(p => p.id != cartItem.id && p.categories.Intersect(cartItem.categories).Any() && p.price <= cartItem.price);
             if (cartTotal < freeshipping)
             {
-                recommended = products.Where(p => p.id != cartItem.id && p.categories.Intersect(cartItem.categories).Any() && p.price >= (freeshipping - cartTotal))
-                    .OrderByDescending(x => x.categories.Count);
+                recommended = products.Where(p => p.id != cartItem.id && p.categories.Intersect(cartItem.categories).Any() && p.price >= (freeshipping - cartTotal));
             }
             else if (cartTotal < toteBagPrice)
             {
-                recommended = products.Where(p => p.id != cartItem.id && p.categories.Intersect(cartItem.categories).Any() & p.price >= (freeshipping - cartTotal)).OrderByDescending(x => x.categories.Count);
+                recommended = products.Where(p => p.id != cartItem.id && p.categories.Intersect(cartItem.categories).Any() & p.price >= (toteBagPrice - cartTotal));
             }
 
-
-
-            return recommended;
+            return recommended.OrderByDescending(x => cartItem.categories.Intersect(x.categories).Count());
         }
 
         // POST: api/ProductAPI
